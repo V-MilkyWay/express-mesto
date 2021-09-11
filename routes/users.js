@@ -3,7 +3,7 @@ const routerUser = require('express').Router();
 // импортируем controllers
 const { createUser, findAllUsers, findUserById, updateProfile, updateAvatar } = require('../controllers/users.js');
 
-routerUser.get('/user', findAllUsers);
+routerUser.get('/users', findAllUsers);
 
 routerUser.get('/users/:userId', findUserById);
 

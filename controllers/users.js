@@ -24,14 +24,21 @@ module.exports.findAllUsers = (req, res) => {
 };
 
 module.exports.findUserById = (req, res) => {
+  /*Временное решение согласно заданию 13 спринта:
+    "В каждом роуте понадобится _id пользователя, совершающего операцию. Получайте его из req.user._id"
+  */
   User.findById(req.user._id)
-    .then(user =>  {if (!user) {
-      return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-    } else {
-      return res.send({ data: user })}
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+      } else {
+        return res.send({ data: user })
+      }
     })
     .catch(err => {
-
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
+      }
       return res.status(500).send({ message: err.message });
     });
 };
@@ -44,12 +51,13 @@ module.exports.updateProfile = (req, res) => {
     runValidators: true, // данные будут валидированы перед изменением
     upsert: false // если пользователь не найден, он будет создан
   })
-    .then(user =>
-      {if (!user) {
+    .then(user => {
+      if (!user) {
         return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
       } else {
-        return res.send({ data: user })}
-      })
+        return res.send({ data: user })
+      }
+    })
     .catch(err => {
       if (err.name === "ValidationError") {
         // Логика обработки ошибки
@@ -68,10 +76,12 @@ module.exports.updateAvatar = (req, res) => {
       runValidators: true,
       upsert: false
     })
-    .then(user =>  {if (!user) {
-      return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-    } else {
-      return res.send({ data: user })}
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+      } else {
+        return res.send({ data: user })
+      }
     })
     .catch(err => {
       if (err.name === "ValidationError") {
