@@ -46,12 +46,6 @@ module.exports.likeCard = (req, res) => {
 
   Card.findByIdAndUpdate(
 
-    /* test
-    req.params._id = {
-      _id: "613a505e786980f660dc8af3"
-    }
-    */
-
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
@@ -74,12 +68,6 @@ module.exports.likeCard = (req, res) => {
 
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
-
-    /* test
-    req.params._id = {
-      _id: "613a505e786980f660dc8af3"
-    }
-    */
 
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива

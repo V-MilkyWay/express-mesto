@@ -24,10 +24,8 @@ module.exports.findAllUsers = (req, res) => {
 };
 
 module.exports.findUserById = (req, res) => {
-  /*Временное решение согласно заданию 13 спринта:
-    "В каждом роуте понадобится _id пользователя, совершающего операцию. Получайте его из req.user._id"
-  */
-  User.findById(req.user._id)
+
+  User.findById(req.params.userId)
     .then(user => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
