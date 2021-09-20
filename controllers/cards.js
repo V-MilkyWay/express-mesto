@@ -38,7 +38,7 @@ module.exports.findByIdAndRemoveCard = (req, res, next) => {
       } else {
         if (req.user._id != card.owner) {
           const err = new Error('Отказано в доступе');
-          err.statusCode = 401;
+          err.statusCode = 403;
 
           next(err);
         }
