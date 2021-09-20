@@ -5,12 +5,12 @@ module.exports = (req, res, next) => {
 
   if (!req.cookies.jwt) {
     const err = new Error('Необходима авторизация');
-    err.statusCode = 403;
+    err.statusCode = 401;
 
     next(err);
   }
 
-  const token = req.cookies.jwt.token;
+  const {token} = req.cookies.jwt;
   let payload;
 
   try {

@@ -4,20 +4,32 @@ const routerCards = require('express').Router();
 // импортируем controllers
 const { createCard, findAllCards, findByIdAndRemoveCard, likeCard, dislikeCard } = require('../controllers/cards.js');
 
-routerCards.post('/cards',celebrate({
+routerCards.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    link: Joi.string()
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+\.[^ "]+$/)
   })
 }), createCard);
 
 routerCards.get('/cards', findAllCards);
 
-routerCards.delete('/cards/:cardId', findByIdAndRemoveCard);
+routerCards.delete('/cards/:cardId', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().length(24).hex()
+  })
+}), findByIdAndRemoveCard);
 
-routerCards.put('/cards/:cardId/likes', likeCard);
+routerCards.put('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().length(24).hex()
+  })
+}), likeCard);
 
-routerCards.delete('/cards/:cardId/likes', dislikeCard);
+routerCards.delete('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().length(24).hex()
+  })
+}), dislikeCard);
 
 // экспортируем router
 module.exports = routerCards;
