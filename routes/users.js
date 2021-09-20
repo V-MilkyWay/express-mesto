@@ -2,7 +2,13 @@ const { celebrate, Joi } = require('celebrate');
 // создадим express router
 const routerUser = require('express').Router();
 // импортируем controllers
-const { findAllUsers, findUserById, updateProfile, updateAvatar, infoAboutUser } = require('../controllers/users.js');
+const {
+  findAllUsers,
+  findUserById,
+  updateProfile,
+  updateAvatar,
+  infoAboutUser,
+} = require('../controllers/users');
 
 routerUser.get('/users', findAllUsers);
 
@@ -10,21 +16,21 @@ routerUser.get('/users/me', infoAboutUser);
 
 routerUser.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24).hex()
-  })
+    userId: Joi.string().required().length(24).hex(),
+  }),
 }), findUserById);
 
 routerUser.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30)
-  })
+    about: Joi.string().required().min(2).max(30),
+  }),
 }), updateProfile);
 
 routerUser.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+\.[^ "]+$/)
-  })
+    avatar: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+\.[^ "]+$/),
+  }),
 }), updateAvatar);
 
 // экспортируем router
