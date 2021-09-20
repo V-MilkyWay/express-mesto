@@ -1,6 +1,6 @@
 const Card = require('../models/card.js');
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user })
@@ -8,41 +8,59 @@ module.exports.createCard = (req, res) => {
     .catch(err => {
       if (err.name === "ValidationError") {
         // Логика обработки ошибки
-        return res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        const err = new Error('Переданы некорректные данные при создании карточки');
+        err.statusCode = 400;
+
+        next(err);
       }
-      return res.status(500).send({ message: err.message });
+      next(err);
     });
 };
 
-module.exports.findAllCards = (req, res) => {
+
+module.exports.findAllCards = (req, res, next) => {
   Card.find({})
     .then(card => res.send({ data: card }))
-    .catch(err => {
-
-      return res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.findByIdAndRemoveCard = (req, res) => {
+module.exports.findByIdAndRemoveCard = (req, res, next) => {
 
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then(card => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка с указанным _id не найден' });
+
+        const err = new Error('Карточка с указанным _id не найден');
+        err.statusCode = 404;
+
+        next(err);
+
       } else {
-        return res.send({ data: card })
+        if (req.user._id != card.owner) {
+          const err = new Error('Отказано в доступе');
+          err.statusCode = 401;
+
+          next(err);
+        }
+        else {
+          card.remove();
+          return res.send({ data: card })
+        }
       }
     })
     .catch(err => {
       if (err.name === "CastError") {
         // Логика обработки ошибки
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        const err = new Error('Переданы некорректные данные');
+        err.statusCode = 400;
+
+        next(err);
       }
-      return res.status(500).send({ message: err.message });
+      next(err);
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
 
   Card.findByIdAndUpdate(
 
@@ -52,7 +70,10 @@ module.exports.likeCard = (req, res) => {
   )
     .then(card => {
       if (!card) {
-        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+        const err = new Error('Пользователь с указанным _id не найден');
+        err.statusCode = 404;
+
+        next(err);
       } else {
         return res.send({ data: card })
       }
@@ -60,13 +81,16 @@ module.exports.likeCard = (req, res) => {
     .catch(err => {
       if (err.name === "CastError") {
         // Логика обработки ошибки
-        return res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка' });
+        const err = new Error('Переданы некорректные данные для постановки лайка');
+        err.statusCode = 400;
+
+        next(err);
       }
-      return res.status(500).send({ message: err.message });
+      next(err);
     })
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
 
     req.params.cardId,
@@ -75,7 +99,10 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then(card => {
       if (!card) {
-        return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+        const err = new Error('Пользователь с указанным _id не найден');
+        err.statusCode = 404;
+
+        next(err);
       } else {
         return res.send({ data: card })
       }
@@ -83,8 +110,11 @@ module.exports.dislikeCard = (req, res) => {
     .catch(err => {
       if (err.name === "CastError") {
         // Логика обработки ошибки
-        return res.status(400).send({ message: 'Переданы некорректные данные для снятии лайка' });
+        const err = new Error('Переданы некорректные данные для снятия лайка');
+        err.statusCode = 400;
+
+        next(err);
       }
-      return res.status(500).send({ message: err.message });
+      next(err);
     })
 }

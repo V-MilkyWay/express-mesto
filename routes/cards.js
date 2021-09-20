@@ -1,9 +1,15 @@
+const { celebrate, Joi } = require('celebrate');
 // создадим express router
 const routerCards = require('express').Router();
 // импортируем controllers
 const { createCard, findAllCards, findByIdAndRemoveCard, likeCard, dislikeCard } = require('../controllers/cards.js');
 
-routerCards.post('/cards', createCard);
+routerCards.post('/cards',celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    link: Joi.string()
+  })
+}), createCard);
 
 routerCards.get('/cards', findAllCards);
 
