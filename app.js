@@ -21,12 +21,12 @@ app.use(cookieParser());
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-   // avatar: Joi.string(),
+    name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
+    about: Joi.string().default('Исследователь').min(2).max(30),
+    avatar: Joi.string().default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png').pattern(/^(http|https):\/\/[^ "]+\.[^ "]+$/),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8)
-  }).unknown(true)
+  })
 }), createUser);
 
 app.post('/signin', celebrate({
@@ -34,7 +34,7 @@ app.post('/signin', celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8)
   })
-} ), login);
+}), login);
 
 
 app.use(auth);

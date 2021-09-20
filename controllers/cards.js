@@ -43,8 +43,8 @@ module.exports.findByIdAndRemoveCard = (req, res, next) => {
           next(err);
         }
         else {
-          card.remove();
-          return res.send({ data: card })
+          card.remove()
+            .then((card) => res.send({ data: card }))
         }
       }
     })

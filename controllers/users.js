@@ -1,4 +1,5 @@
 const User = require('../models/user.js');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 module.exports.createUser = (req, res, next) => {
@@ -7,14 +8,14 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then(hash =>
       User.create({ name, about, avatar, email, password: hash })
-        .then(user => res.send({ data: user }))
+        .then((user) => res.status(200).send({ data: { name, about, avatar, email } }))
         .catch(err => {
           if (err.code === 11000) {
             const err = new Error('Пользователь уже зарегистрирован');
             err.statusCode = 409;
 
             next(err);
-        }
+          }
           if (err.name === "ValidationError") {
             // Логика обработки ошибки
             const err = new Error('Переданы некорректные данные при создании пользователя');
@@ -60,7 +61,16 @@ module.exports.findUserById = (req, res, next) => {
 module.exports.infoAboutUser = (req, res, next) => {
 
   User.findById(req.user._id)
-    .then(user => res.send({ data: user }))
+    .then(user => {
+      if (!user) {
+        const err = new Error('Пользователь с указанным _id не найден');
+        err.statusCode = 404;
+
+        next(err);
+      } else {
+        return res.send({ data: user })
+      }
+    })
     .catch(next);
 };
 
@@ -132,7 +142,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const err = new Error('Неправильные почта или пароль');
-        err.statusCode = 400;
+        err.statusCode = 401;
 
         next(err);
       }
@@ -141,7 +151,7 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) {
             const err = new Error('Неправильные почта или пароль');
-            err.statusCode = 400;
+            err.statusCode = 401;
 
             next(err);
           }
@@ -150,16 +160,14 @@ module.exports.login = (req, res, next) => {
         });
     })
     .then((user) => {
-      const jwt = require('jsonwebtoken');
 
-      res.cookie('jwt', { token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }) }, {
+      res.cookie('jwt', { token: jwt.sign({ _id: user._id }, 'super-strong-secret') }, {
         // token - наш JWT токен, который мы отправляем
-        maxAge: 3600000,
+        maxAge: 604800,
         httpOnly: true
       })
-        .send({
-          token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' })
-        });
+      .status(200)
+      .send({message: 'Пользователь успешно зарегистрирован'});
     })
     .catch(next);
 };
