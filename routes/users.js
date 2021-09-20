@@ -1,13 +1,13 @@
 // создадим express router
 const routerUser = require('express').Router();
 // импортируем controllers
-const { createUser, findAllUsers, findUserById, updateProfile, updateAvatar } = require('../controllers/users.js');
+const { findAllUsers, findUserById, updateProfile, updateAvatar, infoAboutUser } = require('../controllers/users.js');
 
 routerUser.get('/users', findAllUsers);
 
-routerUser.get('/users/:userId', findUserById);
+routerUser.get('/users/me', infoAboutUser);
 
-routerUser.post('/users', createUser);
+routerUser.get('/users/:userId', findUserById);
 
 routerUser.patch('/users/me', updateProfile);
 

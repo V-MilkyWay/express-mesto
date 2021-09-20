@@ -25,12 +25,18 @@ module.exports.findAllCards = (req, res) => {
 
 module.exports.findByIdAndRemoveCard = (req, res) => {
 
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then(card => {
       if (!card) {
         return res.status(404).send({ message: 'Карточка с указанным _id не найден' });
       } else {
-        return res.send({ data: card })
+        if (req.user._id != card.owner) {
+          return res.status(500).send({ message: 'Отказано в доступе' });
+        }
+        else {
+          card.remove();
+          return res.send({ data: card })
+        }
       }
     })
     .catch(err => {
