@@ -1,8 +1,10 @@
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const allowedCors = [
-  'https://praktikum.tk',
-  'http://praktikum.tk',
+  'https://api.your.mesto.nomoredomains.monster/signin',
+  'http://api.your.mesto.nomoredomains.monster/signin',
   'localhost:3000',
+  'https://your.mesto.nomoredomains.club',
+  'http://your.mesto.nomoredomains.club',
 ];
 
 module.exports = (req, res, next) => {
