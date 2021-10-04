@@ -14,21 +14,31 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
+const app = express();
+
+const whitelist = ['http://example1.com', 'http://example2.com'];
+const corsOptionsDelegate = (req, callback) => {
+  let corsOptions = {
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  };
+
+  if (whitelist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true };// reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
 };
 
-const app = express();
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', celebrate({
+app.post('/signup', cors(corsOptionsDelegate), celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -38,7 +48,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', cors(corsOptionsDelegate), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -46,9 +56,9 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', routerUser);
-app.use('/', routerCards);
-app.use('*', (req, res, next) => {
+app.use('/', cors(corsOptionsDelegate), routerUser);
+app.use('/', cors(corsOptionsDelegate), routerCards);
+app.use('*', cors(corsOptionsDelegate), (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
 
