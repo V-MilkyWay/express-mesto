@@ -16,7 +16,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-const whitelist = ['http://example1.com', 'http://example2.com'];
+const whitelist = ['https://api.your.mesto.nomoredomains.club/signup', 'https://your.mesto.nomoredomains.monster/signup'];
 const corsOptionsDelegate = (req, callback) => {
   let corsOptions = {
     origin: '*',
