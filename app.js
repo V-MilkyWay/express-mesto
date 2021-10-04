@@ -16,8 +16,9 @@ const { PORT = 3000 } = process.env;
 
 const corsOptions = {
   origin: '*',
-  credentials: true,
-  optionSuccessStatus: 200,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
 const app = express();
