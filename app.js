@@ -14,31 +14,26 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const app = express();
-
-const whitelist = ['https://api.your.mesto.nomoredomains.club/signup', 'https://your.mesto.nomoredomains.monster/signup'];
-const corsOptionsDelegate = (req, callback) => {
-  let corsOptions = {
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  };
-
-  if (whitelist.indexOf(req.header('Origin')) !== -1) {
-    corsOptions = { origin: true };// reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
+const corsOptions = {
+  origin: '*',
+  credentials: true,
+  optionSuccessStatus: 200,
+  methods: ['GET',
+    'POST',
+    'DELETE',
+    'UPDATE',
+    'PUT',
+    'PATCH'],
 };
 
+const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', cors(corsOptionsDelegate), celebrate({
+app.post('/signup', cors(corsOptions), celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -48,7 +43,7 @@ app.post('/signup', cors(corsOptionsDelegate), celebrate({
   }),
 }), createUser);
 
-app.post('/signin', cors(corsOptionsDelegate), celebrate({
+app.post('/signin', cors(corsOptions), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -56,9 +51,9 @@ app.post('/signin', cors(corsOptionsDelegate), celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', cors(corsOptionsDelegate), routerUser);
-app.use('/', cors(corsOptionsDelegate), routerCards);
-app.use('*', cors(corsOptionsDelegate), (req, res, next) => {
+app.use('/', cors(corsOptions), routerUser);
+app.use('/', cors(corsOptions), routerCards);
+app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
 
