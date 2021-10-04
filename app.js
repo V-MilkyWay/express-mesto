@@ -5,6 +5,8 @@ const { celebrate, Joi, errors } = require('celebrate');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
+const cors = require('./middlewares/cors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('./controllers/users');
 
@@ -13,9 +15,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 
 const app = express();
-
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(requestLogger);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -43,6 +47,8 @@ app.use('*', (req, res, next) => {
 
   next(err);
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
