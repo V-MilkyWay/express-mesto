@@ -21,12 +21,13 @@ const corsOptions = {
 };
 
 const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', cors(corsOptions), celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -36,7 +37,7 @@ app.post('/signup', cors(corsOptions), celebrate({
   }),
 }), createUser);
 
-app.post('/signin', cors(corsOptions), celebrate({
+app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -44,8 +45,8 @@ app.post('/signin', cors(corsOptions), celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', cors(corsOptions), routerUser);
-app.use('/', cors(corsOptions), routerCards);
+app.use('/', routerUser);
+app.use('/', routerCards);
 app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
