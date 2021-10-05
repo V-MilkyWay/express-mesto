@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+const cors = require('cors');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -22,16 +23,7 @@ const allowedCors = [
 */
 
 const app = express();
-app.all('*', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  );
-  next();
-});
+app.all('*', cors());
 
 app.use(express.json());
 app.use(cookieParser());
