@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
+const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -29,8 +30,9 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(helmet());
 app.use(cookieParser());
+app.use(express.json());
 
 app.use(requestLogger);
 
