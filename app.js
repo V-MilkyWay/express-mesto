@@ -71,6 +71,13 @@ app.post('/signin', cors(), celebrate({
 }), login);
 
 app.use(auth);
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 app.use('/', cors(), routerUser);
 app.use('/', cors(), routerCards);
 app.use('*', cors(), (req, res, next) => {
