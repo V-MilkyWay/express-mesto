@@ -14,16 +14,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-/*
 const allowedCors = [
   'https://api.your.mesto.nomoredomains.monster',
   'https://your.mesto.nomoredomains.club',
   'localhost:3000',
 ];
-*/
 
 const app = express();
-app.all('*', cors());
+app.all('*', cors(allowedCors));
 
 app.use(express.json());
 app.use(cookieParser());
