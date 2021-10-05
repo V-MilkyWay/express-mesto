@@ -14,15 +14,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const app = express();
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-app.use(cors());
-app.options('*', cors());
+const corsOptions = {
+  origin: '*',
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
+const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -46,7 +45,6 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-
 app.use('/', routerUser);
 app.use('/', routerCards);
 app.use('*', (req, res, next) => {
