@@ -24,11 +24,6 @@ const allowedCors = [
 
 const app = express();
 
-let corsOptions = {
-  origin: '*',
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
 /*
 app.use((req, res, next) => {
   const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
@@ -58,7 +53,7 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', cors(corsOptions), celebrate({
+app.post('/signup', cors(), celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -68,7 +63,7 @@ app.post('/signup', cors(corsOptions), celebrate({
   }),
 }), createUser);
 
-app.post('/signin', cors(corsOptions), celebrate({
+app.post('/signin', cors(), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -76,9 +71,9 @@ app.post('/signin', cors(corsOptions), celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', cors(corsOptions), routerUser);
-app.use('/', cors(corsOptions), routerCards);
-app.use('*', cors(corsOptions), (req, res, next) => {
+app.use('/', cors(), routerUser);
+app.use('/', cors(), routerCards);
+app.use('*', cors(), (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
 
