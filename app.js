@@ -16,9 +16,12 @@ const { PORT = 3000 } = process.env;
 
 const corsOptions = {
   origin: [
-    'https://api.your.mesto.nomoredomains.monster',
     'https://your.mesto.nomoredomains.club',
     'http://your.mesto.nomoredomains.club',
+    'https://localhost:3000',
+    'http://localhost:3000',
+    'https://62.84.117.54',
+    'http://62.84.117.54',
   ],
   credentials: true,
   optionSuccessStatus: 200,
