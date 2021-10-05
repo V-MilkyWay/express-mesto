@@ -16,8 +16,9 @@ const { PORT = 3000 } = process.env;
 
 const corsOptions = {
   origin: [
-    'https://api.your.mesto.nomoredomains.monster/signup',
+    'https://api.your.mesto.nomoredomains.monster',
     'https://your.mesto.nomoredomains.club',
+    'http://your.mesto.nomoredomains.club',
   ],
   credentials: true,
   optionSuccessStatus: 200,
