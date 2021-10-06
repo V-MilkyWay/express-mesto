@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const cors = require('cors');
 const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
@@ -15,7 +14,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const corsWhiteList = [
+const allowedCors = [
   'https://your.mesto.nomoredomains.club',
   'http://your.mesto.nomoredomains.club',
   'https://localhost:3000',
@@ -23,17 +22,29 @@ const corsWhiteList = [
   'https://62.84.117.54',
   'http://62.84.117.54',
 ];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (corsWhiteList.indexOf(origin) !== -1) {
-      callback(null, true);
-    }
-  },
-  credentials: true,
-};
 
 const app = express();
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
+  // проверяем, что источник запроса есть среди разрешённых
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
+
+  // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  const requestHeaders = req.headers['access-control-request-headers'];
+  // Если это предварительный запрос, добавляем нужные заголовки
+  if (method === 'OPTIONS') {
+    // разрешаем кросс-доменные запросы любых типов (по умолчанию)
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+  }
+
+  next();
+});
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
