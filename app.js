@@ -27,7 +27,7 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', celebrate({
+app.post('/signup', cors(corsOptions), celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -37,7 +37,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', cors(corsOptions), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
