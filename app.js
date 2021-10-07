@@ -16,12 +16,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 
 const corsWhiteList = [
-  'https://your.mesto.nomoredomains.club',
-  'http://your.mesto.nomoredomains.club',
-  'https://localhost:3000',
-  'http://localhost:3000',
-  'https://62.84.117.54',
-  'http://62.84.117.54',
+  'https://your.mesto.nomoredomains.club/',
+  'http://your.mesto.nomoredomains.club/',
 ];
 const corsOptions = {
   origin: (origin, callback) => {
