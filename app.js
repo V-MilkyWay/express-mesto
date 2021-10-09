@@ -13,19 +13,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const allowedCors = [
-  'https://your.mesto.nomoredomains.club/',
-  'https://your.mesto.nomoredomains.club',
-  'localhost:3000',
-];
-
-const app = express();
-app.use((req, res, next) => {
-  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
-  // проверяем, что источник запроса есть среди разрешённых
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
+function cors(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
 
   const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
   const requestHeaders = req.headers['access-control-request-headers'];
@@ -42,7 +31,10 @@ app.use((req, res, next) => {
   }
 
   next();
-});
+}
+
+const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
