@@ -184,7 +184,9 @@ module.exports.login = (req, res, next) => {
         });
     })
     .then((user) => {
-      res.cookie('jwt', { token: jwt.sign({ _id: user._id }, 'super-strong-secret') }, {
+      const { NODE_ENV, JWT_SECRET } = process.env;
+
+      res.cookie('jwt', { token: jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret') }, {
         // token - наш JWT токен, который мы отправляем
         maxAge: 604800,
         httpOnly: true,

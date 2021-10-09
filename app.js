@@ -1,28 +1,38 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
+const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('./controllers/users');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
-const corsOptions = {
-  origin: '* ',
-  methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
-  preflightContinue: true,
-  optionsSuccessStatus: 204,
-};
-const app = express();
-app.use(cors(corsOptions));
 
+const corsOptions = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+
+};
+
+const app = express();
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(requestLogger);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -50,6 +60,8 @@ app.use('*', (req, res, next) => {
 
   next(err);
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
