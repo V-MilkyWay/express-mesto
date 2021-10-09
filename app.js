@@ -17,24 +17,13 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-const allowList = [
-  'https://your.mesto.nomoredomains.club',
-  'http://your.mesto.nomoredomains.club',
-];
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
-const corsOptions = {
-  origin(origin, callback) {
-    if (allowList.indexOf(origin) !== -1) {
-      callback(null, true);
-    }
-  },
-  methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD'],
-  allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
-  credentials: true,
-};
-
-app.options('*', cors());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
