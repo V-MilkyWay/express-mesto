@@ -20,6 +20,9 @@ const allowedCors = [
 ];
 
 const app = express();
+app.use(express.json());
+app.use(cookieParser());
+app.use(requestLogger);
 
 app.use((req, res, next) => {
   const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
@@ -30,11 +33,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-app.use(express.json());
-app.use(cookieParser());
-
-app.use(requestLogger);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
