@@ -17,13 +17,17 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 
 const corsOptions = {
-  origin: 'http://example.com',
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
   optionsSuccessStatus: 204,
+
 };
 
 const app = express();
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
