@@ -13,8 +13,20 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-function cors(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
+const allowedCors = [
+  'https://your.mesto.nomoredomains.club/',
+  'https://your.mesto.nomoredomains.club',
+  'http://your.mesto.nomoredomains.club',
+  'localhost:3000',
+];
+
+const app = express();
+app.use((req, res, next) => {
+  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
+  // проверяем, что источник запроса есть среди разрешённых
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
 
   const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
   const requestHeaders = req.headers['access-control-request-headers'];
@@ -31,15 +43,13 @@ function cors(req, res, next) {
   }
 
   next();
-}
-
-const app = express();
+});
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', cors(), celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -49,7 +59,7 @@ app.post('/signup', cors(), celebrate({
   }),
 }), createUser);
 
-app.post('/signin', cors(), celebrate({
+app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -57,9 +67,9 @@ app.post('/signin', cors(), celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', cors(), routerUser);
-app.use('/', cors(), routerCards);
-app.use('*', cors(), (req, res, next) => {
+app.use('/', routerUser);
+app.use('/', routerCards);
+app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
 
