@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+const cors = require('cors');
+const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -13,37 +15,28 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const allowedCors = [
-  'https://your.mesto.nomoredomains.club/',
+const app = express();
+
+const allowList = [
   'https://your.mesto.nomoredomains.club',
   'http://your.mesto.nomoredomains.club',
-  'localhost:3000',
 ];
 
-const app = express();
-app.use((req, res, next) => {
-  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
-  // проверяем, что источник запроса есть среди разрешённых
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
+const corsOptions = {
+  origin(origin, callback) {
+    if (allowList.indexOf(origin) !== -1) {
+      callback(null, true);
+    }
+  },
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
-  const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
-  const requestHeaders = req.headers['access-control-request-headers'];
-  // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)
-  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
-
-  // Если это предварительный запрос, добавляем нужные заголовки
-  if (method === 'OPTIONS') {
-    // разрешаем кросс-доменные запросы любых типов (по умолчанию)
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-    res.header('Access-Control-Allow-Headers', requestHeaders);
-    // завершаем обработку запроса и возвращаем результат клиенту
-    res.end();
-  }
-
-  next();
-});
+app.options('*', cors());
+app.use(cors(corsOptions));
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
