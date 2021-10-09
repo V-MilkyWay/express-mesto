@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
+// const { requestLogger, errorLogger } = require('./middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('./controllers/users');
 
@@ -40,7 +40,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(requestLogger);
+// app.use(requestLogger);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -69,7 +69,7 @@ app.use('*', (req, res, next) => {
   next(err);
 });
 
-app.use(errorLogger);
+// app.use(errorLogger);
 
 app.use(errors());
 
