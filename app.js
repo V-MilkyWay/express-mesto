@@ -3,8 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const helmet = require('helmet');
 const cors = require('cors');
+const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -17,17 +17,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 
 const app = express();
-app.use(express.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://api.your.mesto.nomoredomains.monster');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
 
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors());
 app.use(helmet());
+app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
