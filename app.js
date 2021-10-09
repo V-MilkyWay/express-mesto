@@ -45,9 +45,9 @@ app.post('/signin', cors(corsOptions), celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', routerUser);
-app.use('/', routerCards);
-app.use('*', (req, res, next) => {
+app.use('/', cors(corsOptions), routerUser);
+app.use('/', cors(corsOptions), routerCards);
+app.use('*', cors(corsOptions), (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
 
