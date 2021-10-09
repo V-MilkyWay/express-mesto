@@ -19,7 +19,7 @@ const { PORT = 3000 } = process.env;
 const corsOptions = {
   origin: 'https://your.mesto.nomoredomains.club',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
+  credentials: true,
   optionsSuccessStatus: 204,
 
 };
