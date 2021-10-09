@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 
 const corsOptions = {
-  origin: '*',
+  origin: 'https://your.mesto.nomoredomains.club',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
   optionsSuccessStatus: 204,
