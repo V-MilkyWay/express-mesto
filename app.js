@@ -21,7 +21,7 @@ const corsOptions = {
 };
 
 const app = express();
-app.use(corsOptions);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -37,7 +37,10 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', (req, res, next) => {
+  res.json({ msg: 'This is CORS-enabled for all origins!' });
+  next();
+}, celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
