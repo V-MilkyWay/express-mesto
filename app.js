@@ -6,6 +6,8 @@ const { celebrate, Joi, errors } = require('celebrate');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
+
+const router = express.Router();
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('./controllers/users');
@@ -21,9 +23,7 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.use('/api', require('./routes/cards'));
-app.use('/api', require('./routes/users'));
-
+app.use('/api', router);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
