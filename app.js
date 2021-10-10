@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
-const auth = require('./middlewares/auth');
+// const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('./controllers/users');
@@ -38,7 +38,7 @@ app.post('/signin', celebrate({
   }),
 }), login);
 
-app.use(auth);
+// app.use(auth);
 app.use('/', routerUser);
 app.use('/', routerCards);
 app.use('*', (req, res, next) => {
