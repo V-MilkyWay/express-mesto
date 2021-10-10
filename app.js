@@ -39,8 +39,8 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', routerUser);
-app.use('/', routerCards);
+app.use('/api/', routerUser);
+app.use('/api/', routerCards);
 app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
