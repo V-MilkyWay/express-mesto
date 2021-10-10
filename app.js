@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/api/signup', celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -31,7 +31,7 @@ app.post('/api/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/api/signin', celebrate({
+app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -39,8 +39,8 @@ app.post('/api/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/api/', routerUser);
-app.use('/api/', routerCards);
+app.use('/', routerUser);
+app.use('/', routerCards);
 app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
