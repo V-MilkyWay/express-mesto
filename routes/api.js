@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const { celebrate, Joi, errors } = require('celebrate');
+const routerUser = require('./users');
+const routerCards = require('./cards');
+const auth = require('../middlewares/auth');
 const { requestLogger, errorLogger } = require('../middlewares/logger');
 // импортируем controllers
 const { createUser, login } = require('../controllers/users');
@@ -21,6 +24,15 @@ router.post('/signin', celebrate({
     password: Joi.string().required().min(8),
   }),
 }), login);
+
+router.use('/', auth, routerUser);
+router.use('/', auth, routerCards);
+router.use('*', (req, res, next) => {
+  const err = new Error('Cтраница не найдена');
+  err.statusCode = 404;
+
+  next(err);
+});
 
 router.use(errorLogger);
 
