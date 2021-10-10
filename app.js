@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
+const corsGate = require('cors-gate');
 const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
@@ -16,18 +17,23 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204,
-
-};
-
 const app = express();
 
-app.options('*', cors(corsOptions));
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: ['https://your.mesto.nomoredomains.club', 'http://your.mesto.nomoredomains.club'],
+  credentials: true,
+}));
+
+// prevent cross-origin requests from domains not permitted by the preceeding cors rules
+app.use(corsGate({
+  // require an Origin header, and reject request if missing
+  strict: true,
+  // permit GET and HEAD requests, even without an Origin header
+  allowSafe: true,
+  // the origin of the server
+  origin: 'https://api.your.mesto.nomoredomains.monster',
+}));
+
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
