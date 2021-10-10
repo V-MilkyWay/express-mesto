@@ -3,8 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const cors = require('cors');
-const helmet = require('helmet');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -16,19 +14,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
-const corsOptions = {
-  origin: 'https://your.mesto.nomoredomains.club',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-  optionsSuccessStatus: 204,
-
-};
-
 const app = express();
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
