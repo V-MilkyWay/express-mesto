@@ -19,7 +19,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(cors({
-  origin: [
+  Origin: [
     'https://your.mesto.nomoredomains.club',
     'http://your.mesto.nomoredomains.club',
     'http://localhost:3001',
@@ -61,8 +61,9 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('/', auth, routerUser);
-app.use('/', auth, routerCards);
+app.use(auth);
+app.use('/', routerUser);
+app.use('/', routerCards);
 app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
