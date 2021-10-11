@@ -55,6 +55,12 @@ app.post('/signin', celebrate({
   }),
 }), login);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(auth);
 app.use('/', routerUser);
 app.use('/', routerCards);
