@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
-app.use('/api/', api);
+app.use('/api', api);
 
 app.use(errorLogger);
 
