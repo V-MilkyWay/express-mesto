@@ -186,13 +186,14 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const { NODE_ENV, JWT_SECRET } = process.env;
 
-      res.cookie('jwt', { token: jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret') }, {
-        // token - наш JWT токен, который мы отправляем
-        maxAge: 604800,
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret', { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
         httpOnly: true,
+        sameSite: true,
       })
         .status(200)
-        .send({ message: 'Пользователь успешно зарегистрирован' });
+        .send({ token, message: 'Пользователь успешно зарегистрирован' });
     })
     .catch(next);
 };

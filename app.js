@@ -22,11 +22,14 @@ app.use(cors({
   origin: [
     'https://your.mesto.nomoredomains.club',
     'http://your.mesto.nomoredomains.club',
+    'http://localhost:3001',
+    'https://localhost:3001',
     'http://localhost:3000',
     'https://localhost:3000',
     'http://62.84.114.117',
     'https://62.84.114.117',
   ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
 app.use(helmet());

@@ -4,7 +4,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         // Логика обработки ошибки
@@ -31,7 +31,7 @@ module.exports.findByIdAndRemoveCard = (req, res, next) => {
         err.statusCode = 404;
 
         next(err);
-      } else if (req.user._id !== card.owner) {
+      } else if (req.user._id !== card.owner.toString()) {
         const errNew = new Error('Отказано в доступе');
         errNew.statusCode = 403;
 
@@ -66,7 +66,7 @@ module.exports.likeCard = (req, res, next) => {
 
         next(err);
       } else {
-        res.send({ data: card });
+        res.send(card);
       }
     })
     .catch((err) => {
@@ -95,7 +95,7 @@ module.exports.dislikeCard = (req, res, next) => {
 
         next(err);
       } else {
-        res.send({ data: card });
+        res.send(card);
       }
     })
     .catch((err) => {
