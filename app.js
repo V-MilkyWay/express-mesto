@@ -3,8 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const cors = require('cors');
 const helmet = require('helmet');
+const cors = require('./middlewares/cors');
 const routerUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const auth = require('./middlewares/auth');
@@ -18,20 +18,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    'https://your.mesto.nomoredomains.club',
-    'http://your.mesto.nomoredomains.club',
-    'http://localhost:3001',
-    'https://localhost:3001',
-    'http://localhost:3000',
-    'https://localhost:3000',
-    'http://62.84.114.117',
-    'https://62.84.114.117',
-  ],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
+app.use(cors);
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
