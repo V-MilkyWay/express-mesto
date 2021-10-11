@@ -4,8 +4,10 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const api = require('./routes/api');
+const apiMain = require('./routes/apiMain');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 // Слушаем 3000 порт
@@ -25,7 +27,8 @@ app.get('/crash-test', () => {
   }, 0);
 });
 app.use('/api', api);
-
+app.use(auth);
+app.use('/api', apiMain);
 app.use(errorLogger);
 
 app.use(errors());
