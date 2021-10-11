@@ -10,24 +10,24 @@ const {
   infoAboutUser,
 } = require('../controllers/users');
 
-routerUser.get('/users', findAllUsers);
+routerUser.get('/', findAllUsers);
 
-routerUser.get('/users/me', infoAboutUser);
+routerUser.get('/me', infoAboutUser);
 
-routerUser.get('/users/:userId', celebrate({
+routerUser.get('/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().length(24).hex(),
   }),
 }), findUserById);
 
-routerUser.patch('/users/me', celebrate({
+routerUser.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
 }), updateProfile);
 
-routerUser.patch('/users/me/avatar', celebrate({
+routerUser.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+\.[^ "]+$/),
   }),
