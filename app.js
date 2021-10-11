@@ -61,9 +61,8 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use(auth);
-app.use('/users', routerUser);
-app.use('/cards', routerCards);
+app.use('/users', auth, routerUser);
+app.use('/cards', auth, routerCards);
 app.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
