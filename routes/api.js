@@ -24,12 +24,6 @@ api.post('/signin', cors, celebrate({
   }),
 }), login);
 
-api.get('/crash-test', cors, () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
 api.use('/', auth, routerUser);
 api.use('/', auth, routerCards);
 api.use('*', (req, res, next) => {
