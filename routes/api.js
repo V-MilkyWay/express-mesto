@@ -30,9 +30,8 @@ api.get('/crash-test', cors, () => {
   }, 0);
 });
 
-api.use(auth);
-api.use('/', routerUser);
-api.use('/', routerCards);
+api.use('/', auth, routerUser);
+api.use('/', auth, routerCards);
 api.use('*', (req, res, next) => {
   const err = new Error('Cтраница не найдена');
   err.statusCode = 404;
