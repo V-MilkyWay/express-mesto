@@ -18,14 +18,13 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.post('/signup', celebrate({
+app.post('/signup', cors, celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
@@ -35,14 +34,14 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', cors, celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), login);
 
-app.get('/crash-test', () => {
+app.get('/crash-test', cors, () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
