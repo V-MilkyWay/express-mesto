@@ -3,7 +3,9 @@ const api = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { createUser, login } = require('../controllers/users');
 const cors = require('../middlewares/cors');
-
+const routerUser = require('./users');
+const routerCards = require('./cards');
+const auth = require('../middlewares/auth');
 // импортируем controllers
 api.post('/signup', cors, celebrate({
   body: Joi.object().keys({
@@ -21,6 +23,15 @@ api.post('/signin', cors, celebrate({
     password: Joi.string().required().min(8),
   }),
 }), login);
+
+api.use('/api/', auth, routerUser);
+api.use('/api/', auth, routerCards);
+api.use('*', (req, res, next) => {
+  const err = new Error('Cтраница не найдена');
+  err.statusCode = 404;
+
+  next(err);
+});
 
 // экспортируем router
 module.exports = api;
